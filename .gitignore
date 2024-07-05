@@ -336,3 +336,8 @@ tags
 [._]*.un~
 
 # End of https://www.toptal.com/developers/gitignore/api/python,jetbrains+all,libreoffice,vim,emacs
+
+.idea/
+.idea
+
+.~lock.livingdex.xlsx#
