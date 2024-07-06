@@ -5,6 +5,8 @@ import shutil
 from PIL import Image
 from json import dumps
 
+# TODO: Write a web interface that makes this easier to do :)
+
 
 def validate_link(link):
     if link == "":
