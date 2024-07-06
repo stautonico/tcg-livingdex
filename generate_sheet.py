@@ -34,17 +34,32 @@ livingdex.write(0, 3, "Second Pick", center_text)
 livingdex.write(0, 4, "Third Pick", center_text)
 livingdex.write(0, 5, "Fourth Pick", center_text)
 
+row_itr = 1
 for file in os.listdir("pokemon_data"):
     with open(f"pokemon_data/{file}", 'r') as f:
         data = loads(f.read())
 
-    row_index = int(file.split(".")[0])
-    livingdex.write(row_index, 0, data["id"], id_text)
-    livingdex.write(row_index, 1, data["name"].title(), pokemon_text)
-    livingdex.write(row_index, 2,
-                    f"=IMAGE(\"https://raw.githubusercontent.com/stautonico/tcg-livingdex/main/images/{data['id']}/1.jpg\", 2)")
+    livingdex.write(row_itr, 0, data["id"], id_text)
+    livingdex.write(row_itr, 1, data["name"].title(), pokemon_text)
+    livingdex.write(row_itr, 2,
+                    f"=IMAGE(\"https://raw.githubusercontent.com/stautonico/tcg-livingdex/main/images/{data['id']}/1.png\", 2)")
+
+    if os.path.exists(f"images/{data['id']}/2.png"):
+        livingdex.write(row_itr, 3,
+                        f"=IMAGE(\"https://raw.githubusercontent.com/stautonico/tcg-livingdex/main/images/{data['id']}/2.png\", 2)")
+
+    if os.path.exists(f"images/{data['id']}/3.png"):
+        livingdex.write(row_itr, 4,
+                        f"=IMAGE(\"https://raw.githubusercontent.com/stautonico/tcg-livingdex/main/images/{data['id']}/3.png\", 2)")
+
+    if os.path.exists(f"images/{data['id']}/4.png"):
+        livingdex.write(row_itr, 5,
+                        f"=IMAGE(\"https://raw.githubusercontent.com/stautonico/tcg-livingdex/main/images/{data['id']}/4.png\", 2)")
+
+
+
 
     livingdex.set_column_pixels(2, 2, 63*4)
-    livingdex.set_row_pixels(row_index, 88*4)
+    livingdex.set_row_pixels(row_itr, 88*4)
 
 workbook.close()
