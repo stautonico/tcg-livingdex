@@ -139,4 +139,10 @@ for file in os.listdir("pokemon_data"):
     livingdex.set_row_pixels(row_itr, 88 * 4)
     row_itr += 3
 
+
+# Draw the count
+livingdex.write(0, 8, "Total", title_text)
+livingdex.write(0, 9, "=concat(round(countif(G2:G9999, \"TRUE\")), concat(\" of \", COUNTA(G2:G9999)))", title_text)
+livingdex.write(0, 10, "=concat(concat(\"(\", concat(round(countif(G2:G9999, \"TRUE\")/COUNTA(G2:G9999)*100, 2), \"%\")), \")\")", title_text)
+
 workbook.close()

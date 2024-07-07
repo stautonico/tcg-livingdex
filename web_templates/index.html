@@ -242,6 +242,24 @@
                 }
             })
         })
+
+
+        if (!response.ok) {
+            alert("Something went wrong when saving!");
+        } else {
+            let data = await response.text();
+
+            if (data === "done") {
+                alert("Saved!");
+                // Clear all inputs
+                for (let i of document.getElementsByTagName("input")) {
+                    i.value = "";
+                }
+                window.location.reload();
+            } else {
+                alert("Something went wrong when saving!");
+            }
+        }
     })
 
 </script>

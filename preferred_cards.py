@@ -57,60 +57,64 @@ def images_exist(number):
 
 @app.route("/generate", methods=["POST"])
 def generate():
-    data = request.json
+    try:
+        data = request.json
 
-    if not os.path.exists(f"images/{data['pokedexNum']}"):
-        os.mkdir(f"images/{data['pokedexNum']}")
+        if not os.path.exists(f"images/{data['pokedexNum']}"):
+            os.mkdir(f"images/{data['pokedexNum']}")
 
-    payload = {}
+        payload = {}
 
-    filename = "1." + get_file_extension(data["card1"]["img"])
-    file_path = os.path.join("images", str(data["pokedexNum"]), filename)
-    download_file(data["card1"]["img"], file_path)
-    convert_image(file_path)
-    payload[1] = {
-        "img": file_path,
-        "set_name": data["card1"]["set"],
-        "set_num": data["card1"]["num"]
-    }
-
-    if data["card2"]["img"] != "":
-        filename = "2." + get_file_extension(data["card2"]["img"])
+        filename = "1." + get_file_extension(data["card1"]["img"])
         file_path = os.path.join("images", str(data["pokedexNum"]), filename)
-        download_file(data["card2"]["img"], file_path)
+        download_file(data["card1"]["img"], file_path)
         convert_image(file_path)
-        payload[2] = {
+        payload[1] = {
             "img": file_path,
-            "set_name": data["card2"]["set"],
-            "set_num": data["card2"]["num"]
+            "set_name": data["card1"]["set"],
+            "set_num": data["card1"]["num"]
         }
 
-    if data["card3"]["img"] != "":
-        filename = "3." + get_file_extension(data["card3"]["img"])
-        file_path = os.path.join("images", str(data["pokedexNum"]), filename)
-        download_file(data["card3"]["img"], file_path)
-        convert_image(file_path)
-        payload[3] = {
-            "img": file_path,
-            "set_name": data["card3"]["set"],
-            "set_num": data["card3"]["num"]
-        }
+        if data["card2"]["img"] != "":
+            filename = "2." + get_file_extension(data["card2"]["img"])
+            file_path = os.path.join("images", str(data["pokedexNum"]), filename)
+            download_file(data["card2"]["img"], file_path)
+            convert_image(file_path)
+            payload[2] = {
+                "img": file_path,
+                "set_name": data["card2"]["set"],
+                "set_num": data["card2"]["num"]
+            }
 
-    if data["card4"]["img"] != "":
-        filename = "4." + get_file_extension(data["card4"]["img"])
-        file_path = os.path.join("images", str(data["pokedexNum"]), filename)
-        download_file(data["card4"]["img"], file_path)
-        convert_image(file_path)
-        payload[4] = {
-            "img": file_path,
-            "set_name": data["card4"]["set"],
-            "set_num": data["card4"]["num"]
-        }
+        if data["card3"]["img"] != "":
+            filename = "3." + get_file_extension(data["card3"]["img"])
+            file_path = os.path.join("images", str(data["pokedexNum"]), filename)
+            download_file(data["card3"]["img"], file_path)
+            convert_image(file_path)
+            payload[3] = {
+                "img": file_path,
+                "set_name": data["card3"]["set"],
+                "set_num": data["card3"]["num"]
+            }
 
-    with open(os.path.join("images", str(data["pokedexNum"]), "meta.json"), "w") as f:
-        f.write(dumps(payload))
+        if data["card4"]["img"] != "":
+            filename = "4." + get_file_extension(data["card4"]["img"])
+            file_path = os.path.join("images", str(data["pokedexNum"]), filename)
+            download_file(data["card4"]["img"], file_path)
+            convert_image(file_path)
+            payload[4] = {
+                "img": file_path,
+                "set_name": data["card4"]["set"],
+                "set_num": data["card4"]["num"]
+            }
 
-    return ""
+        with open(os.path.join("images", str(data["pokedexNum"]), "meta.json"), "w") as f:
+            f.write(dumps(payload))
+
+        return "done"
+    except Exception as e:
+        print(e)
+        return f"fail"
 
 
 app.run(debug=True)
