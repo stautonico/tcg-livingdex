@@ -1,0 +1,249 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Insert Preferred Cards</title>
+</head>
+<body>
+
+<div>
+    <label>
+        Pokedex Number
+        <input id="pokedex" type="text" placeholder="#">
+    </label>
+
+    <h3 id="pokemonName"></h3>
+
+    <div id="display1" style="display: inline-block">
+        <label>
+            First Choice URL
+            <input type="url" id="choice1url">
+        </label>
+
+        <label>
+            Set Name
+            <input type="text" id="set1name">
+        </label>
+
+        <label>
+            Card Number
+            <input style="width: 65px" type="text" id="set1num">
+        </label>
+
+    </div>
+        <div id="display2" style="display: none">
+        <label>
+            Second Choice URL
+            <input type="url" id="choice2url">
+        </label>
+
+        <label>
+            Set Name
+            <input type="text" id="set2name">
+        </label>
+
+        <label>
+            Card Number
+            <input style="width: 65px" type="text" id="set2num">
+        </label>
+
+    </div>
+        <div id="display3" style="display: none">
+        <label>
+            Third Choice URL
+            <input type="url" id="choice3url">
+        </label>
+
+        <label>
+            Set Name
+            <input type="text" id="set3name">
+        </label>
+
+        <label>
+            Card Number
+            <input style="width: 65px" type="text" id="set3num">
+        </label>
+
+    </div>
+        <div id="display4" style="display: none">
+        <label>
+            Fourth Choice URL
+            <input type="url" id="choice4url">
+        </label>
+
+        <label>
+            Set Name
+            <input type="text" id="set4name">
+        </label>
+
+        <label>
+            Card Number
+            <input style="width: 65px" type="text" id="set4num">
+        </label>
+
+    </div>
+
+    <br><br><br>
+
+
+    <div style="display: inline-block">
+        <img width="256" src="" id="card1">
+        <img width="256" src="" id="card2">
+        <img width="256" src="" id="card3">
+        <img width="256" src="" id="card4">
+    </div>
+
+    <br><br>
+    <button id="save">Save</button>
+
+
+</div>
+
+</body>
+
+<script>
+    const pokedexNumInput = document.getElementById("pokedex");
+    const pokemonName = document.getElementById("pokemonName");
+
+    const url1 = document.getElementById("choice1url");
+    const url2 = document.getElementById("choice2url");
+    const url3 = document.getElementById("choice3url");
+    const url4 = document.getElementById("choice4url");
+
+    const set1name = document.getElementById("set1name");
+    const set2name = document.getElementById("set2name");
+    const set3name = document.getElementById("set3name");
+    const set4name = document.getElementById("set4name");
+    const set1num = document.getElementById("set1num");
+    const set2num = document.getElementById("set2num");
+    const set3num = document.getElementById("set3num");
+    const set4num = document.getElementById("set4num");
+
+    const card1 = document.getElementById("card1");
+    const card2 = document.getElementById("card2");
+    const card3 = document.getElementById("card3");
+    const card4 = document.getElementById("card4");
+
+    const display1 = document.getElementById("display1")
+    const display2 = document.getElementById("display2")
+    const display3 = document.getElementById("display3")
+    const display4 = document.getElementById("display4")
+
+    const save_button = document.getElementById("save")
+
+
+    function toggleUrlDisplay(card, show) {
+        let tochange;
+        if (card === 1) tochange = display1;
+        if (card === 2) tochange = display2;
+        if (card === 3) tochange = display3;
+        if (card === 4) tochange = display4;
+
+        if (show === true) tochange.style.display = "inline-block";
+        else tochange.style.display = "none";
+    }
+
+    async function imagesExist(number) {
+        let response = await fetch(`/images_exist/${number}`);
+
+        if (!response.ok) return true;
+
+        let data = await response.text();
+
+        return data === "yes"
+    }
+
+    pokedexNumInput.addEventListener("change", async (e) => {
+        let num = e.target.value;
+
+        if (num !== "") {
+
+            let response = await fetch(`/name_by_number/${num}`)
+
+            if (!response.ok) {
+                alert(`'${num}' is an invalid pokedex number`);
+                e.target.value = "";
+            } else {
+                let data = await response.text();
+                pokemonName.innerText = data;
+            }
+
+            let imgExists = imagesExist(num);
+
+            if (imgExists === true) {
+                let confirmResponse = confirm(`Preferred cards for ${pokemonName.innerText} already exists. Overwrite?`)
+                if (confirmResponse === false) {
+                    e.target.value = "";
+                    pokemonName.innerText = "";
+                    return;
+                }
+            }
+        }
+    });
+
+    url1.addEventListener("change", (e) => {
+        let url = e.target.value;
+
+        if (url === "") toggleUrlDisplay(2, false)
+        else toggleUrlDisplay(2, true);
+
+        card1.src = url;
+    })
+    url2.addEventListener("change", (e) => {
+        let url = e.target.value;
+
+        if (url === "") toggleUrlDisplay(3, false)
+        else toggleUrlDisplay(3, true);
+
+        card2.src = url;
+    })
+    url3.addEventListener("change", (e) => {
+        let url = e.target.value;
+
+        if (url === "") toggleUrlDisplay(4, false)
+        else toggleUrlDisplay(4, true);
+
+        card3.src = url;
+    })
+    url4.addEventListener("change", (e) => {
+        let url = e.target.value;
+        card4.src = url;
+    })
+
+    save_button.addEventListener("click", async () => {
+        const response = await fetch("/generate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "pokedexNum": pokedexNumInput.value,
+                "card1": {
+                    "img": url1.value,
+                    "set": set1name.value,
+                    "num": set1num.value
+                },
+                "card2": {
+                    "img": url2.value,
+                    "set": set2name.value,
+                    "num": set2num.value
+                },
+                "card3": {
+                    "img": url3.value,
+                    "set": set3name.value,
+                    "num": set3num.value
+                },
+                "card4": {
+                    "img": url4.value,
+                    "set": set4name.value,
+                    "num": set4num.value
+                }
+            })
+        })
+    })
+
+</script>
+
+</html>
