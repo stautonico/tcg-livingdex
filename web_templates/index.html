@@ -152,6 +152,7 @@
 
         let data = await response.text();
 
+
         return data === "yes"
     }
 
@@ -170,9 +171,11 @@
                 pokemonName.innerText = data;
             }
 
-            let imgExists = imagesExist(num);
+            let imgExists = await imagesExist(num);
 
-            if (imgExists === true) {
+            console.log(imgExists);
+
+            if (imgExists) {
                 let confirmResponse = confirm(`Preferred cards for ${pokemonName.innerText} already exists. Overwrite?`)
                 if (confirmResponse === false) {
                     e.target.value = "";
