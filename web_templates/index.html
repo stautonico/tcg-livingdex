@@ -9,10 +9,15 @@
 <body>
 
 <div>
+    <div style="display: inline-block">
     <label>
         Pokedex Number
         <input id="pokedex" type="text" placeholder="#">
     </label>
+
+    <button id="randomize">Randomize</button>
+
+    </div>
 
     <h3 id="pokemonName"></h3>
 
@@ -133,6 +138,53 @@
 
     const save_button = document.getElementById("save")
 
+    const randomize_button = document.getElementById("randomize");
+
+    async function changeInputHandler(num) {
+        if (num !== "") {
+            let response = await fetch(`/name_by_number/${num}`)
+
+            if (!response.ok) {
+                alert(`'${num}' is an invalid pokedex number`);
+                e.target.value = "";
+            } else {
+                let data = await response.text();
+                pokemonName.innerText = data;
+            }
+
+            let imgExists = await imagesExist(num);
+
+
+            if (imgExists) {
+                let confirmResponse = confirm(`Preferred cards for ${pokemonName.innerText} already exists. Overwrite?`)
+                if (confirmResponse === false) {
+                    e.target.value = "";
+                    pokemonName.innerText = "";
+                    return;
+                }
+            } else {
+                await navigator.clipboard.writeText(pokemonName.innerText);
+            }
+        }
+    }
+
+
+
+    randomize_button.addEventListener("click", async () => {
+        while (true) {
+            const pokedexNum = Math.floor(Math.random() * 1025 + 1);
+            pokedexNumInput.value = pokedexNum; // Looks cool
+
+            const exists = await imagesExist(pokedexNum);
+
+            if (!exists) {
+                await changeInputHandler(pokedexNum);
+                break;
+            }
+            
+        }
+    })
+
 
     function toggleUrlDisplay(card, show) {
         let tochange;
@@ -158,32 +210,7 @@
 
     pokedexNumInput.addEventListener("change", async (e) => {
         let num = e.target.value;
-
-        if (num !== "") {
-
-            let response = await fetch(`/name_by_number/${num}`)
-
-            if (!response.ok) {
-                alert(`'${num}' is an invalid pokedex number`);
-                e.target.value = "";
-            } else {
-                let data = await response.text();
-                pokemonName.innerText = data;
-            }
-
-            let imgExists = await imagesExist(num);
-
-            console.log(imgExists);
-
-            if (imgExists) {
-                let confirmResponse = confirm(`Preferred cards for ${pokemonName.innerText} already exists. Overwrite?`)
-                if (confirmResponse === false) {
-                    e.target.value = "";
-                    pokemonName.innerText = "";
-                    return;
-                }
-            }
-        }
+        await changeInputHandler(num);
     });
 
     url1.addEventListener("change", (e) => {
