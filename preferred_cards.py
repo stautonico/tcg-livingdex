@@ -62,6 +62,10 @@ def generate():
 
         if not os.path.exists(f"images/{data['pokedexNum']}"):
             os.mkdir(f"images/{data['pokedexNum']}")
+        else:
+            files = os.listdir(f"images/{data['pokedexNum']}")
+            for file in files:
+                os.remove(os.path.join(f"images", data["pokedexNum"], file))
 
         payload = {}
 
