@@ -8,4 +8,8 @@ pool = [x for x in range(1, 1025 + 1)]
 for h in has:
     pool.remove(int(h))
 
-print(choice(pool))
+
+
+print(f"Cards left: {len(pool)}")
+
+#print(choice(pool))
